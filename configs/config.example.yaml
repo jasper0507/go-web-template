@@ -1,0 +1,12 @@
+http:
+    addr: ":8080"
+
+mysql:
+    host: 127.0.0.1
+    port: 3306
+    username: app
+    password: app_password
+    database: go_web_template
+
+redis:
+    ports: 6379
