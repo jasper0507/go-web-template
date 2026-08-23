@@ -1,4 +1,4 @@
-package configs
+package config
 
 import (
 	"fmt"
@@ -17,7 +17,7 @@ type Config struct {
 }
 
 type HTTPConfig struct {
-	Port int `mapstructure:"port"`
+	Addr string `mapstructure:"addr"`
 }
 
 type MySQLConfig struct {
