@@ -14,6 +14,12 @@ const defaultConfigFile = "configs/config.yaml"
 type Config struct {
 	HTTP  HTTPConfig  `mapstructure:"http"`
 	MySQL MySQLConfig `mapstructure:"mysql"`
+	Log   LogConfig   `mapstructure:"log"`
+}
+
+type LogConfig struct {
+	Level  string `mapstructure:"level"`
+	Format string `mapstructure:"format"`
 }
 
 type HTTPConfig struct {
