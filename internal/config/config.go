@@ -16,12 +16,8 @@ const defaultConfigFile = "configs/config.yaml"
 type Config struct {
 	HTTP  HTTPConfig  `mapstructure:"http"`
 	MySQL MySQLConfig `mapstructure:"mysql"`
+	Redis RedisConfig `mapstructure:"redis"`
 	Log   LogConfig   `mapstructure:"log"`
-}
-
-type LogConfig struct {
-	Level  string `mapstructure:"level"`
-	Format string `mapstructure:"format"`
 }
 
 type HTTPConfig struct {
@@ -37,6 +33,17 @@ type MySQLConfig struct {
 	MaxOpenConns    int           `mapstructure:"max_open_conns"`
 	MaxIdleConns    int           `mapstructure:"max_idle_conns"`
 	ConnMaxLifetime time.Duration `mapstructure:"conn_max_lifetime"`
+}
+
+type RedisConfig struct {
+	Addr     string `mapstructure:"addr"`
+	Password string `mapstructure:"password"`
+	DB       int    `mapstructure:"db"`
+}
+
+type LogConfig struct {
+	Level  string `mapstructure:"level"`
+	Format string `mapstructure:"format"`
 }
 
 func Load() (*Config, error) {
