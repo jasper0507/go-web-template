@@ -7,11 +7,11 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jasper0507/go-web-template/internal/cache"
 	"github.com/jasper0507/go-web-template/internal/config"
 	"github.com/jasper0507/go-web-template/internal/database"
 	applog "github.com/jasper0507/go-web-template/internal/logger"
+	"github.com/jasper0507/go-web-template/internal/router"
 )
 
 func main() {
@@ -56,9 +56,9 @@ func run() error {
 	// 4. 初始化 Redis
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	
+
 	rdb, err := cache.Open(ctx, &cfg.Redis)
-	
+
 	if err != nil {
 		return fmt.Errorf("init Redis: %w", err)
 	}
@@ -72,13 +72,7 @@ func run() error {
 	slog.Info("Redis initialized", "address", cfg.Redis.Addr)
 
 	// 5. 注册路由
-	r := gin.New()
-	r.Use(gin.Recovery())
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	r := router.New()
 
 	// 6. 启动 HTTP 服务
 	slog.Info("starting HTTP server", "address", cfg.HTTP.Addr)
