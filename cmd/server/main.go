@@ -6,7 +6,8 @@ import (
 	"log/slog"
 
 	"github.com/gin-gonic/gin"
-	config "github.com/jasper0507/go-web-template/internal/config"
+	"github.com/jasper0507/go-web-template/internal/config"
+	"github.com/jasper0507/go-web-template/internal/database"
 	appLogger "github.com/jasper0507/go-web-template/internal/logger"
 )
 
@@ -26,9 +27,28 @@ func run() error {
 	// 创建日志记录器
 	logger, err := appLogger.New(&cfg.Log)
 	if err != nil {
-		return fmt.Errorf("create logger: %w", err)
+		return fmt.Errorf("init logger: %w", err)
 	}
 	slog.SetDefault(logger)
+
+	// 初始化数据库连接
+	db, err := database.Open(&cfg.MySQL)
+	if err != nil {
+		return fmt.Errorf("init MySQL: %w", err)
+	}
+
+	slog.Info(
+		"MySQL initialized",
+		"max_open_conns", cfg.MySQL.MaxOpenConns,
+		"max_idle_conns", cfg.MySQL.MaxIdleConns,
+		"max_lifetime", cfg.MySQL.ConnMaxLifetime,
+	)
+
+	defer func() {
+		if err := database.Close(db); err != nil {
+			slog.Warn("close MySQL", "error", err)
+		}
+	}()
 
 	// 创建路由
 	r := gin.New()
@@ -39,7 +59,7 @@ func run() error {
 		})
 	})
 
-	logger.Info("starting HTTP server", "address", cfg.HTTP.Addr)
+	slog.Info("starting HTTP server", "address", cfg.HTTP.Addr)
 	if err := r.Run(cfg.HTTP.Addr); err != nil {
 		return fmt.Errorf("run HTTP server: %w", err)
 	}
