@@ -13,7 +13,7 @@ import (
 const shutdownTimeout = 5 * time.Second
 
 // Run 启动 HTTP 服务，并在收到退出信号后优雅关闭。
-func Run(addr string, handler http.Handler) error {
+func Run(handler http.Handler, addr string) error {
 	// 1. 创建服务器
 	srv := &http.Server{
 		Addr:    addr,

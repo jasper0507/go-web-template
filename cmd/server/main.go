@@ -12,6 +12,7 @@ import (
 	"github.com/jasper0507/go-web-template/internal/database"
 	applog "github.com/jasper0507/go-web-template/internal/logger"
 	"github.com/jasper0507/go-web-template/internal/router"
+	"github.com/jasper0507/go-web-template/internal/server"
 )
 
 func main() {
@@ -76,7 +77,7 @@ func run() error {
 
 	// 6. 启动 HTTP 服务
 	slog.Info("starting HTTP server", "address", cfg.HTTP.Addr)
-	if err := r.Run(cfg.HTTP.Addr); err != nil {
+	if err := server.Run(r, cfg.HTTP.Addr); err != nil {
 		return fmt.Errorf("run HTTP server: %w", err)
 	}
 	return nil
