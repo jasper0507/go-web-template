@@ -56,9 +56,10 @@ func run() error {
 
 	// 4. 初始化 Redis
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	rdb, err := cache.Open(ctx, &cfg.Redis)
+
+	cancel()
 
 	if err != nil {
 		return fmt.Errorf("init Redis: %w", err)
