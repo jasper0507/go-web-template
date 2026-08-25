@@ -78,7 +78,7 @@ func run() error {
 
 	// 6. 启动 HTTP 服务
 	slog.Info("starting HTTP server", "address", cfg.HTTP.Addr)
-	if err := server.Run(r, cfg.HTTP.Addr); err != nil {
+	if err := server.Run(r, &cfg.HTTP); err != nil {
 		return fmt.Errorf("run HTTP server: %w", err)
 	}
 	return nil

@@ -21,7 +21,8 @@ type Config struct {
 }
 
 type HTTPConfig struct {
-	Addr string `mapstructure:"addr"`
+	Addr            string        `mapstructure:"addr"`
+	ShutdownTimeout time.Duration `mapstructure:"shutdown_timeout"`
 }
 
 type MySQLConfig struct {
@@ -46,6 +47,28 @@ type LogConfig struct {
 	Format string `mapstructure:"format"`
 }
 
+func setDefaultConfig(v *viper.Viper) {
+	// HTTP 默认值
+	v.SetDefault("http.addr", ":8080")
+	v.SetDefault("http.shutdown_timeout", 5*time.Second)
+
+	// MySQL 默认值
+	v.SetDefault("mysql.host", "127.0.0.1")
+	v.SetDefault("mysql.port", 3306)
+	v.SetDefault("mysql.max_open_conns", 10)
+	v.SetDefault("mysql.max_idle_conns", 10)
+	v.SetDefault("mysql.conn_max_lifetime", 3*time.Minute)
+
+	// Redis 默认值
+	v.SetDefault("redis.addr", "127.0.0.1:6379")
+	v.SetDefault("redis.password", "")
+	v.SetDefault("redis.db", 0)
+
+	// Log 默认值（避免空字符串导致 logger 初始化报错）
+	v.SetDefault("log.level", "info")
+	v.SetDefault("log.format", "json")
+}
+
 func Load() (*Config, error) {
 	// 允许部署时通过环境变量指定其他配置文件路径
 	// 未设置时使用项目默认配置文件
@@ -55,6 +78,9 @@ func Load() (*Config, error) {
 	}
 
 	v := viper.New()
+
+	// 设置默认配置项
+	setDefaultConfig(v)
 
 	// 1. 确定配置文件路径
 	v.SetConfigFile(configFile)

@@ -7,16 +7,15 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
+
+	"github.com/jasper0507/go-web-template/internal/config"
 )
 
-const shutdownTimeout = 5 * time.Second
-
 // Run 启动 HTTP 服务，并在收到退出信号后优雅关闭。
-func Run(handler http.Handler, addr string) error {
+func Run(handler http.Handler, cfg *config.HTTPConfig) error {
 	// 1. 创建服务器
 	srv := &http.Server{
-		Addr:    addr,
+		Addr:    cfg.Addr,
 		Handler: handler,
 	}
 
@@ -45,7 +44,7 @@ func Run(handler http.Handler, addr string) error {
 	// 3. 创建一个`shutdownTimeout`秒后自动超时的上下文
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
-		shutdownTimeout,
+		cfg.ShutdownTimeout,
 	)
 	// 确保Shutdown用完就释放
 	defer cancel()
